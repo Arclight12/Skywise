@@ -1,0 +1,83 @@
+\documentclass[12pt]{article}
+\usepackage[margin=1.2in]{geometry}
+\usepackage[toc,page]{appendix}
+\usepackage{graphicx}
+\usepackage[square,numbers]{natbib}
+\usepackage{lipsum}
+\usepackage{caption}
+\usepackage{pdfpages}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+
+
+\setlength{\parindent}{0pt}
+\begin{document}
+
+\captionsetup[figure]{margin=1.5cm,font=small,labelfont={bf},name={Figure},labelsep=colon,textfont={it}}
+\captionsetup[table]{margin=1.5cm,font=small,labelfont={bf},name={Table},labelsep=colon,textfont={it}}
+\SetLipsumDefault{1}
+
+
+\begin{center}
+\thispagestyle{empty}
+{\LARGE Amrita Vishwa Vidyapeetham}\\[.5cm]
+{\Large Amrita School of Computing}\\[3cm]
+{\linespread{1.2} {\Large Technical Report}}\\[0.5cm]
+{\huge \bfseries Intelligent Satellite Downlink Prioritization System:\\[0.3cm] A Two-Stage Classification and Scheduling Approach}\\[2.5cm]
+\linespread{1}
+\includegraphics[width=10cm]{images/logo.jpeg}\\
+\vspace{\fill}
+{\Large Team : }\\[1cm]
+{\Large Roll No : Name}\\
+{\Large Roll No : Name}\\
+{\Large Roll No : Name}\\[1cm]
+
+{\Large \today}
+\end{center}
+
+\clearpage
+\pagenumbering{arabic}
+
+% -------------------------------------------------------------------
+% Contents, list of figures, list of tables
+% -------------------------------------------------------------------
+% \input{sections/0_history.tex}
+% \newpage
+\tableofcontents
+%\listoffigures
+%\listoftables
+
+\newpage
+
+% -------------------------------------------------------------------
+% Main sections (as required)
+% -------------------------------------------------------------------
+\begin{abstract}
+Satellites generate massive volumes of imagery data, but limited downlink bandwidth prevents transmission of all captured data. This project addresses the critical problem of intelligent data prioritization for satellite downlink operations. We propose a two-stage system that first classifies images based on quality metrics (cloud cover, recency, event criticality) to filter unnecessary data, then schedules the remaining high-priority images using three optimization algorithms: Greedy, A* Search, and Simulated Annealing. The classification stage successfully rejects low-value data (cloudy images, stale observations), saving bandwidth. The scheduling stage optimizes transmission order to maximize total priority value. Experimental results on 20 satellite images show that A* Search achieves the best performance, scheduling 4-8 images with total priority value of $\sim$171, compared to Greedy (1 image, value $\sim$66) and Simulated Annealing (4 images, value $\sim$155). This system ensures critical data (floods, fires) is transmitted first while avoiding bandwidth waste on unnecessary images.
+\end{abstract}
+\input{sections/1_introduction.tex}
+\input{sections/2_background.tex}
+\input{sections/3_methodology.tex}
+\input{sections/4_results.tex}
+\input{sections/6_conclusion.tex}
+
+
+% -------------------------------------------------------------------
+% Bibliography
+% -------------------------------------------------------------------
+
+\bibliographystyle{plainnat}
+\bibliography{main} 
+
+% -------------------------------------------------------------------
+% Appendices
+% -------------------------------------------------------------------
+
+\newpage
+
+% \begin{appendices}
+% \input{sections/appendixA.tex}
+% \input{sections/appendixB.tex}
+% \end{appendices}
+
+\end{document}

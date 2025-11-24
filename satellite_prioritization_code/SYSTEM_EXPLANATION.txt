@@ -1,0 +1,232 @@
+================================================================================
+    INTELLIGENT SATELLITE DOWNLINK PRIORITIZATION SYSTEM
+    Classification + Scheduling for Resource-Efficient Transmission
+================================================================================
+
+PROBLEM STATEMENT:
+------------------
+Satellites capture massive amounts of imagery data, but downlink bandwidth is 
+extremely limited. We face TWO critical challenges:
+
+1. NOT ALL DATA IS WORTH TRANSMITTING
+   - Cloudy images (high cloud_cover) have poor visibility
+   - Low-quality images provide little useful information
+   - Old/stale data may no longer be relevant
+   - Routine observations in low-priority regions can wait
+
+2. LIMITED BANDWIDTH MEANS WE MUST PRIORITIZE
+   - Cannot transmit everything even if we wanted to
+   - Must choose the MOST IMPORTANT images first
+   - Wasting bandwidth on unnecessary data is costly
+
+
+SYSTEM OVERVIEW - TWO-STAGE APPROACH:
+--------------------------------------
+This system uses a TWO-STAGE process to maximize the value of transmitted data:
+
+STAGE 1: CLASSIFICATION (Filtering Unnecessary Data)
+  → Reject cloudy, low-quality, or low-priority images
+  → Only images that pass quality thresholds move forward
+  → This SAVES bandwidth by not scheduling useless data
+
+STAGE 2: SCHEDULING (Prioritizing Necessary Data)
+  → Among the classified "necessary" images, determine transmission order
+  → Use optimization algorithms to maximize total value transmitted
+  → Ensure critical images (floods, fires) are sent first
+
+
+CURRENT INPUT STATUS:
+---------------------
+- Total Input Images: 20 satellite images
+- Input File: data/satellite_data.csv
+- Total Data Volume: ~640 MB
+- Image Distribution:
+  * Coastal regions: 6 images (floods, storms, fires)
+  * Urban areas: 5 images (fires, floods, urban changes)
+  * River regions: 4 images (floods, fires, storms)
+  * Forest areas: 3 images (fires, normal monitoring)
+  * Agriculture: 3 images (urban changes, normal)
+  * Mountain regions: 2 images (storms, normal)
+- Quality Range: 0.65 to 0.93
+- Cloud Cover Range: 0.05 to 0.35
+- Size Range: 22 to 45 MB
+
+
+SYSTEM WORKFLOW:
+----------------
+
+STEP 1: DATA LOADING
+--------------------
+- Load satellite imagery metadata from CSV file
+- Each image has: ID, region, event type, quality, cloud cover, size, timestamp
+- Assign dummy visibility windows (time slots when satellite can transmit)
+
+
+STEP 2: CLASSIFICATION - FILTERING UNNECESSARY DATA
+----------------------------------------------------
+⚠️ CRITICAL STAGE: This is where we REJECT images that aren't worth transmitting!
+
+WHY FILTER?
+- Transmitting cloudy images wastes bandwidth (can't see anything useful)
+- Low-quality images provide minimal scientific/operational value
+- Old data may no longer be actionable
+- Routine observations in low-priority areas can be deferred
+
+HOW WE CLASSIFY (FILTER):
+----------------------------
+Location: core/filter.py
+
+A. Reference Priority Weights (core/reference_priority.py):
+   - Region Priorities:
+     * coastal: 0.9 (high priority - disaster prone)
+     * urban: 0.8 (high population density)
+     * river: 0.85 (flood monitoring)
+     * forest: 0.5 (medium priority)
+     * agriculture: 0.4 (lower priority)
+   
+   - Event Type Priorities:
+     * flood: 1.0 (critical emergency)
+     * fire: 0.95 (critical emergency)
+     * storm: 0.9 (severe weather)
+     * urban_change: 0.7 (monitoring)
+     * normal: 0.2 (routine observation)
+
+B. Heuristic Scoring Function:
+   For each image, calculate priority score using:
+   
+   score = (0.5 × region_weight + 0.4 × event_weight) 
+           × quality_factor × recency_factor × 100
+   
+   Where:
+   - quality_factor = quality × (1 - cloud_cover)
+     (Higher quality and less cloud cover = better)
+   
+   - recency_factor = exp(-0.15 × hours_old)
+     (Newer images score higher, old images decay exponentially)
+
+C. Classification Decision (Filtering):
+   - Threshold: score >= 10.0
+   - Images BELOW threshold → REJECTED (not worth bandwidth)
+   - Images ABOVE threshold → CLASSIFIED AS "NECESSARY" (move to scheduling)
+   
+   Current Result with 20 images:
+   ✅ ACCEPTED (Necessary): 19 images → Move to scheduling
+   ❌ REJECTED (Unnecessary): 1 image → Do NOT transmit (saves bandwidth!)
+
+
+STEP 3: SCHEDULING - PRIORITIZING NECESSARY DATA
+-------------------------------------------------
+Now that we've CLASSIFIED which images are necessary (19 out of 20),
+we need to SCHEDULE them in optimal order for transmission.
+------------------------------
+Three different algorithms schedule the filtered images for transmission:
+
+ALGORITHM 1: GREEDY (algorithms/algo1_greedy.py)
+-------------------------------------------------
+Strategy: Pick highest-scoring images first, schedule if bandwidth available
+Pros: Fast, simple, intuitive
+Cons: May miss globally optimal solution
+Current Result: Scheduled 1/5 images (only img_1)
+
+
+ALGORITHM 2: A* SEARCH (algorithms/algo2_astar.py)
+---------------------------------------------------
+Strategy: Explore multiple scheduling possibilities using heuristic search
+- Uses priority queue to explore best paths first
+- Heuristic estimates remaining value from unscheduled images
+- Finds better solutions than greedy
+Pros: More optimal than greedy, considers future possibilities
+Cons: Slower, more complex
+Current Result: Scheduled 4/5 images (img_1, img_3, img_4, img_2)
+
+
+ALGORITHM 3: SIMULATED ANNEALING (algorithms/algo3_simanneal.py)
+-----------------------------------------------------------------
+Strategy: Random exploration with controlled randomness (temperature)
+- Starts with random schedule
+- Randomly swaps images, accepts improvements
+- Sometimes accepts worse solutions (to escape local optima)
+- "Temperature" decreases over time (less random as it progresses)
+Pros: Can find global optimum, avoids getting stuck
+Cons: Non-deterministic, requires tuning
+Current Result: Scheduled 4/5 images (img_1, img_2, img_4, img_5)
+
+
+STEP 4: OUTPUT & VISUALIZATION
+-------------------------------
+- Saves 3 CSV files (one per algorithm) in outputs/ folder
+- Each CSV shows: Node ID, Region, Event, Score, Size, Start Time, End Time
+- Visualization (comparison_plot.py) shows:
+  * Priority scores for each algorithm
+  * Which images were scheduled (colored) vs not scheduled (gray)
+  * Total priority value transmitted
+
+
+KEY PARAMETERS:
+---------------
+- Bandwidth: 3.0 MB/minute (configurable)
+- Score Threshold: 10.0 (minimum score to be considered)
+- Recency Decay Rate: 0.15 (how quickly old images lose priority)
+- Visibility Windows: Time slots when satellite can transmit data
+
+
+PERFORMANCE COMPARISON:
+-----------------------
+Algorithm          | Scheduled | Total Priority Value
+-------------------|-----------|---------------------
+Greedy             | 1/5       | ~66.0
+A* Search          | 4/5       | ~171.1
+Simulated Annealing| 4/5       | ~155.1
+
+Winner: A* Search (best balance of coverage and total value)
+
+
+HOW TO EXPAND INPUT:
+--------------------
+To add more images, edit data/satellite_data.csv:
+- Add rows with format: id,region,event_type,quality,cloud_cover,size_mb,timestamp
+- Ensure timestamps are recent (within hours of current time)
+- Supported regions: coastal, urban, river, forest, agriculture, mountain
+- Supported events: flood, fire, storm, urban_change, normal
+
+
+FILES STRUCTURE:
+----------------
+main.py                     - Main execution script
+data/satellite_data.csv     - Input imagery metadata (5 images)
+core/
+  ├── datamodel.py          - DataNode class definition
+  ├── filter.py             - Scoring and filtering logic
+  └── reference_priority.py - Priority weights for regions/events
+algorithms/
+  ├── algo1_greedy.py       - Greedy scheduling algorithm
+  ├── algo2_astar.py        - A* search scheduling algorithm
+  └── algo3_simanneal.py    - Simulated annealing algorithm
+outputs/
+  ├── greedy_schedule.csv   - Greedy algorithm results
+  ├── astar_schedule.csv    - A* algorithm results
+  └── simanneal_schedule.csv- Simulated annealing results
+comparison_plot.py          - Visualization script
+
+
+USAGE:
+------
+1. Run main script:
+   python main.py
+
+2. View visualization:
+   python comparison_plot.py
+
+3. Check outputs in outputs/ folder
+
+
+FUTURE ENHANCEMENTS:
+--------------------
+- Add more input images (currently only 5)
+- Tune algorithm parameters for better performance
+- Add real visibility window calculations
+- Implement multi-satellite scheduling
+- Add real-time data ingestion
+- Machine learning for dynamic priority adjustment
+
+================================================================================

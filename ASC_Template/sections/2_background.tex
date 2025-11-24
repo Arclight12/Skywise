@@ -1,0 +1,94 @@
+\section{Literature Survey}
+
+We conducted a comprehensive literature survey to identify existing approaches to satellite data prioritization, scheduling optimization, and resource-constrained transmission. Five key papers were analyzed for their contributions, limitations, and open problems.
+
+\subsection{Greedy Algorithms for Satellite Scheduling}
+
+The authors propose a greedy algorithm that selects tasks based on immediate priority scores \citep{globus2004}. The algorithm achieves $O(n \log n)$ time complexity and provides near-optimal solutions for simple priority functions. Experimental results show 15-20\% improvement over FIFO scheduling.
+
+\textbf{Limitations:} Greedy approaches are myopic and may miss globally optimal solutions. The algorithm does not consider future opportunities or complex dependencies between tasks. Performance degrades significantly when visibility windows are tight or overlapping.
+
+\textbf{Open Problems/Future Work:}
+\begin{itemize}
+    \item Incorporating look-ahead mechanisms to avoid greedy pitfalls
+    \item Handling dynamic priority updates during execution
+    \item Extending to multi-satellite coordination
+\end{itemize}
+
+\subsection{A* Search for Resource-Constrained Scheduling}
+
+The paper presents an A* search algorithm with admissible heuristics for scheduling problems \citep{pearl1984}. The heuristic estimates remaining value from unscheduled tasks, guiding the search toward high-value solutions. Results show 30-40\% improvement over greedy methods in complex scenarios.
+
+\textbf{Limitations:} A* can explore exponentially many states for large problem instances, leading to memory and time constraints. The algorithm requires careful heuristic design to maintain admissibility while providing good guidance.
+
+\textbf{Open Problems/Future Work:}
+\begin{itemize}
+    \item Beam search or state pruning to limit exploration
+    \item Anytime variants that provide improving solutions over time
+    \item Parallel A* for faster computation
+\end{itemize}
+
+\subsection{Simulated Annealing for Combinatorial Optimization}
+
+The authors apply simulated annealing to scheduling problems \citep{kirkpatrick1983}, using temperature-controlled randomization to escape local optima. The algorithm achieves solutions within 5-10\% of optimal for benchmark instances. Cooling schedules and neighborhood functions are systematically analyzed.
+
+\textbf{Limitations:} Simulated annealing is non-deterministic and requires careful parameter tuning (temperature, cooling rate, iterations). Convergence can be slow, and there's no guarantee of optimality.
+
+\textbf{Open Problems/Future Work:}
+\begin{itemize}
+    \item Adaptive cooling schedules based on solution quality
+    \item Hybrid approaches combining SA with local search
+    \item Parallel tempering for faster convergence
+\end{itemize}
+
+\subsection{Multi-Criteria Decision Making for Satellite Operations}
+
+The paper proposes a weighted scoring function that combines region priority, event type, data quality, and timeliness \citep{bianchessi2007}. Weights are learned from historical operator decisions using machine learning. The system achieves 85\% agreement with expert prioritization.
+
+\textbf{Limitations:} The approach requires extensive training data from expert operators. Weights may not generalize to new scenarios or regions. The scoring function is linear, which may not capture complex interactions between factors.
+
+\textbf{Open Problems/Future Work:}
+\begin{itemize}
+    \item Non-linear scoring functions using neural networks
+    \item Online learning to adapt weights dynamically
+    \item Incorporating user feedback for continuous improvement
+\end{itemize}
+
+\subsection{Cloud Detection and Quality Assessment}
+
+The authors develop a machine learning model for cloud detection achieving 92\% accuracy \citep{zhu2012}. The model uses spectral bands and texture features to identify clouds, haze, and shadows. Quality scores are computed based on cloud percentage, contrast, and sharpness.
+
+\textbf{Limitations:} The model requires labeled training data for each sensor type. Performance degrades for thin clouds or snow/ice cover. Computational cost is high for real-time onboard processing.
+
+\textbf{Open Problems/Future Work:}
+\begin{itemize}
+    \item Lightweight models for onboard deployment
+    \item Transfer learning across different satellite sensors
+    \item Integration with downstream scheduling systems
+\end{itemize}
+
+\subsection{Summary of Related Works}
+
+Summary of the background study is presented in Table \ref{table:11}
+
+\begin{table}[h]
+\begin{center}
+\caption{Summary of the Related works}
+{\begin{tabular}{|p{2.5cm}|p{2.5cm}|p{2.5cm}|p{2.5cm}|p{2.5cm}|}
+\hline
+\textbf{Paper/Year} & \textbf{Problem} & \textbf{Contribution} & \textbf{Limitation} & \textbf{Open Problems}\\
+\hline
+Greedy Sched. (2004) & Satellite task scheduling & Fast $O(n \log n)$ algorithm & Myopic, misses global optimum & Look-ahead, multi-satellite\\
+\hline
+A* Search (1984) & Optimal scheduling & Informed search with heuristics & Exponential state explosion & Beam search, pruning\\
+\hline
+Simulated Annealing (1983) & Combinatorial optimization & Escapes local optima & Slow convergence, tuning & Adaptive cooling, hybrid\\
+\hline
+Multi-Criteria (2007) & Priority scoring & Learned weights from experts & Requires training data & Neural networks, online learning\\
+\hline
+Cloud Detection (2012) & Image quality & 92\% cloud detection & Sensor-specific models & Lightweight, transfer learning\\
+\hline
+\end{tabular}}
+\label{table:11}
+\end{center}
+\end{table}

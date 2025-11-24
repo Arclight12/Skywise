@@ -1,0 +1,86 @@
+\section{Introduction}
+
+\subsection{Problem Statement}
+
+Earth observation satellites continuously capture high-resolution imagery for disaster monitoring, environmental analysis, and urban planning. However, these satellites face a fundamental constraint: downlink bandwidth is severely limited compared to data generation rates. Modern satellites can capture hundreds of gigabytes daily, but may only have 10-20 minute communication windows with ground stations, limiting transmission to a fraction of captured data.
+
+This creates two critical challenges:
+
+\begin{enumerate}
+\item \textbf{NOT ALL DATA IS WORTH TRANSMITTING}
+\begin{itemize}
+    \item Cloudy images obscure ground features, providing minimal scientific value
+    \item Low-quality images due to sensor issues or poor lighting are unusable
+    \item Stale data (hours or days old) may no longer be actionable for disasters
+    \item Routine observations in low-priority regions can be deferred
+\end{itemize}
+
+\item \textbf{LIMITED BANDWIDTH REQUIRES INTELLIGENT PRIORITIZATION}
+\begin{itemize}
+    \item Cannot transmit all data even if desired
+    \item Must identify and transmit the MOST IMPORTANT images first
+    \item Wasting bandwidth on unnecessary data delays critical information
+\end{itemize}
+\end{enumerate}
+
+\subsection{Motivation}
+
+Consider a disaster response scenario: A coastal region experiences severe flooding. The satellite captures 50 images over the affected area, but can only transmit 10 images before losing contact with the ground station. Among these 50 images:
+\begin{itemize}
+    \item 15 images have $>$60\% cloud cover (unusable)
+    \item 10 images are routine observations of low-priority agricultural areas
+    \item 5 images are high-quality flood imagery of populated coastal zones
+    \item 20 images are moderate-quality observations of various regions
+\end{itemize}
+
+Without intelligent prioritization, the satellite might transmit cloudy or low-priority images, delaying critical flood data needed for emergency response. This delay could cost lives.
+
+\subsection{Existing Challenges}
+
+Current satellite downlink systems face several limitations:
+\begin{itemize}
+    \item Simple FIFO (First-In-First-Out) scheduling wastes bandwidth on poor data
+    \item Manual prioritization by operators is slow and doesn't scale
+    \item Single-criterion sorting (e.g., by timestamp only) ignores data quality
+    \item Lack of multi-objective optimization for complex priority factors
+\end{itemize}
+
+\subsection{Our Solution Approach}
+
+We propose a TWO-STAGE intelligent prioritization system:
+
+\textbf{STAGE 1: CLASSIFICATION (Filtering Unnecessary Data)}
+\begin{itemize}
+    \item Evaluate each image using a heuristic scoring function
+    \item Consider region priority, event type, quality, cloud cover, and recency
+    \item Reject images below a quality threshold (saves bandwidth)
+\end{itemize}
+
+\textbf{STAGE 2: SCHEDULING (Optimizing Transmission Order)}
+\begin{itemize}
+    \item Among classified ``necessary'' images, determine optimal transmission sequence
+    \item Compare three algorithms: Greedy, A* Search, Simulated Annealing
+    \item Maximize total priority value transmitted within bandwidth constraints
+\end{itemize}
+
+\subsection{Research Objectives}
+
+The specific objectives of this work are:
+\begin{enumerate}
+    \item Design a multi-factor heuristic function for image quality assessment
+    \item Implement classification to filter unnecessary data before scheduling
+    \item Develop and compare three scheduling optimization algorithms
+    \item Evaluate system performance on realistic satellite imagery metadata
+    \item Demonstrate bandwidth savings through intelligent filtering
+\end{enumerate}
+
+\subsection{Contributions}
+
+The contributions of this work are:
+\begin{itemize}
+    \item A two-stage classification + scheduling framework for satellite downlink
+    \item A heuristic scoring function incorporating region, event, quality, cloud cover, and recency factors
+    \item Implementation and comparison of three scheduling algorithms (Greedy, A*, Simulated Annealing)
+    \item Experimental validation showing 95\% classification accuracy (19/20 images correctly evaluated)
+    \item Demonstration that A* Search achieves 2.5x better performance than Greedy scheduling
+\end{itemize}

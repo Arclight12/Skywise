@@ -52,6 +52,8 @@ def schedule_data(filtered_nodes, bandwidth_mb_per_minute=3.0, max_iter=2000, te
     for i in range(max_iter):
         new_schedule = current_schedule.copy()
         # Randomly swap two tasks
+        if len(new_schedule) < 2:
+            break # Cannot swap if fewer than 2 items
         a, b = random.sample(range(len(new_schedule)), 2)
         new_schedule[a], new_schedule[b] = new_schedule[b], new_schedule[a]
 

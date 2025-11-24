@@ -1,0 +1,5 @@
+Node ID,Region,Event,Score,Size (MB),Start,End
+img_18,mountain,storm,20.39,26,2025-11-24T21:18:28,2025-11-24T21:27:28
+img_2,urban,normal,26.54,40,2025-11-24T20:52:28,2025-11-24T21:06:28
+img_1,coastal,flood,60.23,35,2025-11-24T21:06:28,2025-11-24T21:18:28
+img_5,agriculture,urban_change,26.3,25,2025-11-24T20:43:28,2025-11-24T20:52:28

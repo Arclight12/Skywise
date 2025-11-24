@@ -1,0 +1,34 @@
+\section{Conclusions}
+
+This project successfully developed and evaluated an intelligent satellite downlink prioritization system using a two-stage classification and scheduling approach. The system addresses the critical problem of limited bandwidth by: (1) filtering unnecessary data (cloudy, low-quality, stale images) before scheduling, and (2) optimizing transmission order to maximize total priority value.
+
+\subsection{Key Findings}
+
+\begin{enumerate}
+    \item A* Search achieves 2.59x better performance than Greedy with 88\% bandwidth utilization
+    \item Simulated Annealing provides competitive performance (2.35x better than Greedy)
+    \item Classification successfully filters low-value data (95\% acceptance rate)
+    \item The two-stage approach effectively combines filtering and optimization
+\end{enumerate}
+
+\subsection{Contributions}
+
+\begin{itemize}
+    \item A two-stage framework combining classification and scheduling
+    \item Multi-factor heuristic scoring function for image prioritization
+    \item Implementation and comparison of three scheduling algorithms
+    \item Experimental validation on realistic satellite imagery metadata
+\end{itemize}
+
+\subsection{Future Work}
+
+\begin{enumerate}
+    \item Implement realistic visibility windows using orbital mechanics
+    \item Test on larger datasets (100-1000 images)
+    \item Optimize A* with beam search or state pruning for scalability
+    \item Integrate machine learning for dynamic priority weight adaptation
+    \item Extend to multi-satellite coordination
+    \item Deploy for real-time onboard satellite processing
+\end{enumerate}
+
+The intelligent satellite downlink prioritization system demonstrates significant improvements over naive scheduling approaches. A* Search emerges as the best-performing algorithm, achieving 2.5x better results than Greedy scheduling. This work provides a solid foundation for practical deployment in satellite operations.

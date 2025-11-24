@@ -1,0 +1,86 @@
+\section{Proposed Methodology}
+
+Our proposed system consists of two main stages as shown in Figure \ref{fig:SequenceDiagram}.
+
+\begin{figure}[h]
+    \includegraphics[width=12cm]{./figures/system_architecture_clean.png}
+    \centering
+    \caption{Two-Stage System Architecture}
+    \label{fig:SequenceDiagram}
+\end{figure}
+
+\subsection{Data Classification Module}
+
+\subsubsection{Input Data Model}
+Each satellite image is represented by a DataNode with attributes: \texttt{id}, \texttt{region} (coastal, urban, forest, agriculture, mountain, river), \texttt{event\_type} (flood, fire, storm, urban\_change, normal), \texttt{quality} [0.0, 1.0], \texttt{cloud\_cover} [0.0, 1.0], \texttt{size\_mb}, \texttt{timestamp}, and \texttt{visibility\_windows}.
+
+\subsubsection{Reference Priority Weights}
+We define priority weights based on operational importance:
+
+\textbf{Region Priorities:} coastal (0.9), river (0.85), urban (0.8), forest (0.5), agriculture (0.4), mountain (0.3)
+
+\textbf{Event Type Priorities:} flood (1.0), fire (0.95), storm (0.9), urban\_change (0.7), normal (0.2)
+
+\subsubsection{Heuristic Scoring Function}
+For each image, we compute a priority score using:
+
+\begin{equation}
+\text{score} = (0.5 \times w_{\text{region}} + 0.4 \times w_{\text{event}}) \times f_{\text{quality}} \times f_{\text{recency}} \times 100
+\end{equation}
+
+where:
+\begin{equation}
+f_{\text{quality}} = \text{quality} \times (1 - \text{cloud\_cover})
+\end{equation}
+
+\begin{equation}
+f_{\text{recency}} = e^{-0.15 \times \text{hours\_old}}
+\end{equation}
+
+Images with score $\geq$ 10.0 are classified as ``necessary'' and proceed to scheduling.
+
+\subsection{Scheduling Optimization Module}
+
+\subsubsection{Problem Formulation}
+\textbf{Given:} $N$ classified images with priority scores $s_1, \ldots, s_N$, data sizes $d_1, \ldots, d_N$ (MB), bandwidth $B$ (MB/min), visibility windows $W_1, \ldots, W_N$
+
+\textbf{Objective:} Maximize total priority value of transmitted images
+
+\textbf{Constraints:} Each image transmitted at most once, transmission within visibility windows, no overlapping transmissions
+
+\subsection{Algorithms}
+
+\subsubsection{Algorithm 1: Greedy Scheduling}
+
+\begin{algorithm}[h]
+\caption{Greedy Scheduling}
+\label{alg:greedy}
+\begin{algorithmic}[1]
+\State \textbf{Input:} filtered\_nodes, bandwidth
+\State \textbf{Output:} schedule
+\State current\_time $\gets$ now()
+\State candidates $\gets$ sort(filtered\_nodes, by=score, descending)
+\State schedule $\gets$ []
+\For{each node in candidates}
+    \State slot $\gets$ find\_earliest\_slot(node, current\_time, bandwidth)
+    \If{slot is not None}
+        \State schedule.append(\{node, start, end\})
+    \Else
+        \State schedule.append(\{node, None, None\})
+    \EndIf
+\EndFor
+\State \Return schedule
+\end{algorithmic}
+\end{algorithm}
+
+Time Complexity: $O(n^2 \times m)$ where $n$ = images, $m$ = visibility windows
+
+\subsubsection{Algorithm 2: A* Search Scheduling}
+
+A* explores the state space of partial schedules using a priority queue. Each state represents a partial schedule with some images transmitted and others remaining.
+
+Heuristic Function: $h(\text{state}) = \sum \text{scores of remaining images} \times 0.5$
+
+\subsubsection{Algorithm 3: Simulated Annealing}
+
+Simulated annealing uses randomized search with temperature-controlled acceptance of worse solutions to escape local optima. Parameters: max\_iter = 2000, temp\_start = 100, cooling\_rate = 0.99.

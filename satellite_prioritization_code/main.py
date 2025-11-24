@@ -50,5 +50,5 @@ if __name__ == "__main__":
     pd.DataFrame(astar).to_csv("outputs/astar_schedule.csv", index=False)
     pd.DataFrame(sa).to_csv("outputs/simanneal_schedule.csv", index=False)
 
-    print("✅ Schedules saved in 'outputs/' folder.")
+    print("Schedules saved in 'outputs/' folder.")
     print("Next: Run 'comparison_plot.py' to visualize the differences.")
