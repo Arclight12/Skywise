@@ -40,6 +40,8 @@ def schedule_data(filtered_nodes, bandwidth_mb_per_minute=3.0):
                 "Start": s.isoformat(),
                 "End": e.isoformat()
             })
+            # Advance current_time so subsequent nodes are scheduled after this slot
+            current_time = e
         else:
             schedule.append({
                 "Node ID": node.id,
