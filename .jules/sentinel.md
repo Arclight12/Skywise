@@ -1,0 +1,4 @@
+## 2024-05-20 - Add Input Validation to DataNode Model
+**Vulnerability:** Core data model `DataNode` in `core/datamodel.py` was accepting arbitrary ranges for attributes like `quality`, `cloud_cover`, and `size_mb` without any bounds checking.
+**Learning:** This lack of input validation allowed for the potential of corrupt state and unexpected behaviors in the downstream scheduling algorithms which rely on these values. Also, I attempted to sanitize string parameters for CSV injection in the data model layer, which mutated the underlying domain object rather than securing the CSV export step.
+**Prevention:** Data bound checks should be validated when domain objects are initialized. Output encoding/sanitization for a specific format (like CSV) should happen at the presentation/export layer (e.g., when converting the model for pandas), not by mutating the core domain model itself.
