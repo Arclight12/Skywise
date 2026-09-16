@@ -14,20 +14,36 @@ def load_dataset(csv_path="data/satellite_data.csv"):
     df = pd.read_csv(csv_path)
     nodes = []
     for _, row in df.iterrows():
-        # dummy visibility window (for now)
-        now = datetime.now().replace(microsecond=0)
-        vw = [(now + timedelta(minutes=10), now + timedelta(minutes=60))]
-        node = DataNode(
-            id=row.id,
-            region=row.region,
-            event_type=row.event_type,
-            quality=row.quality,
-            cloud_cover=row.cloud_cover,
-            size_mb=row.size_mb,
-            timestamp=row.timestamp,
-            visibility_windows=vw
-        )
-        nodes.append(node)
+        try:
+            # Input validation and type casting
+            quality = float(row.quality)
+            cloud_cover = float(row.cloud_cover)
+            size_mb = float(row.size_mb)
+
+            if not (0 <= quality <= 1) or not (0 <= cloud_cover <= 1) or size_mb <= 0:
+                continue
+
+            id_str = str(row.id)[:50]
+            region_str = str(row.region)[:50]
+            event_type_str = str(row.event_type)[:50]
+
+            # dummy visibility window (for now)
+            now = datetime.now().replace(microsecond=0)
+            vw = [(now + timedelta(minutes=10), now + timedelta(minutes=60))]
+            node = DataNode(
+                id=id_str,
+                region=region_str,
+                event_type=event_type_str,
+                quality=quality,
+                cloud_cover=cloud_cover,
+                size_mb=size_mb,
+                timestamp=row.timestamp,
+                visibility_windows=vw
+            )
+            nodes.append(node)
+        except (ValueError, TypeError):
+            # Skip invalid rows securely to prevent leaking info
+            continue
     return nodes
 
 if __name__ == "__main__":
