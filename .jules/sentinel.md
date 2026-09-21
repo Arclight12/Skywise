@@ -1,0 +1,4 @@
+## 2026-09-21 - CSV Injection and Validation Gap in Downlink Prioritization
+**Vulnerability:** Input data (like satellite image region or ID) were parsed and written back to CSV files (used for scheduling output) without sanitization against CSV injection characters (`=`, `+`, `-`, `@`). Additionally, `quality`, `cloud_cover`, and `size_mb` lacked numeric validation.
+**Learning:** Even internal datasets read from static CSVs can contain malicious formula injections if those files are sourced from uncontrolled domains. Writing this data to another CSV can compromise downstream reporting tools if opened in Excel.
+**Prevention:** Sanitize string inputs that are destined for CSV by removing leading formula operators, and enforce range checks for sensitive numeric variables at the time of object instantiation.
