@@ -6,9 +6,22 @@ class DataNode:
         self.id = id
         self.region = region
         self.event_type = event_type
-        self.quality = quality
-        self.cloud_cover = cloud_cover
-        self.size_mb = size_mb
+
+        # Security: Input validation
+        quality_f = float(quality)
+        cloud_cover_f = float(cloud_cover)
+        size_mb_f = float(size_mb)
+
+        if not (0.0 <= quality_f <= 1.0):
+            raise ValueError("Quality must be between 0.0 and 1.0")
+        if not (0.0 <= cloud_cover_f <= 1.0):
+            raise ValueError("Cloud cover must be between 0.0 and 1.0")
+        if size_mb_f <= 0:
+            raise ValueError("Size must be positive")
+
+        self.quality = quality_f
+        self.cloud_cover = cloud_cover_f
+        self.size_mb = size_mb_f
         self.timestamp = datetime.fromisoformat(timestamp)
         self.visibility_windows = visibility_windows  # list of (start, end) datetime tuples
         self.score = 0
