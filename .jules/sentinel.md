@@ -1,0 +1,4 @@
+## 2023-10-27 - Input Validation for External Data
+**Vulnerability:** The application was missing input validation for data loaded from external CSV files. It accepted arbitrary strings/numbers for fields like quality, cloud_cover, size_mb, and timestamp, which could lead to DoS (huge file sizes), logic flaws (negative cloud cover), or stack trace exposure (bad datetime format).
+**Learning:** Data coming from files must be treated as untrusted user input, especially when used in initialization or scheduling algorithms. Unvalidated data can cause unexpected behavior across multiple systems.
+**Prevention:** Always validate and sanitize data parsed from external sources (e.g., bounding numerical values between 0 and 1 for percentages, ensuring sizes are positive, and safely parsing dates). Wrap conversions in `try...except` to ensure generic error messages are displayed instead of stack traces.
