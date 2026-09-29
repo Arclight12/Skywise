@@ -6,10 +6,16 @@ class DataNode:
         self.id = id
         self.region = region
         self.event_type = event_type
-        self.quality = quality
-        self.cloud_cover = cloud_cover
-        self.size_mb = size_mb
-        self.timestamp = datetime.fromisoformat(timestamp)
+        # Security: Validate and sanitize input bounds to prevent DoS or unexpected calculation behavior
+        self.quality = max(0.0, min(1.0, float(quality)))
+        self.cloud_cover = max(0.0, min(1.0, float(cloud_cover)))
+        self.size_mb = max(0.0, float(size_mb))
+
+        # Security: Safe timestamp parsing
+        try:
+            self.timestamp = datetime.fromisoformat(str(timestamp))
+        except ValueError:
+            raise ValueError("Invalid timestamp format")
         self.visibility_windows = visibility_windows  # list of (start, end) datetime tuples
         self.score = 0
         self.filtered = False
