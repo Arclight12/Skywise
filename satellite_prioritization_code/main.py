@@ -17,17 +17,24 @@ def load_dataset(csv_path="data/satellite_data.csv"):
         # dummy visibility window (for now)
         now = datetime.now().replace(microsecond=0)
         vw = [(now + timedelta(minutes=10), now + timedelta(minutes=60))]
-        node = DataNode(
-            id=row.id,
-            region=row.region,
-            event_type=row.event_type,
-            quality=row.quality,
-            cloud_cover=row.cloud_cover,
-            size_mb=row.size_mb,
-            timestamp=row.timestamp,
-            visibility_windows=vw
-        )
-        nodes.append(node)
+
+        try:
+            node = DataNode(
+                id=row.id,
+                region=row.region,
+                event_type=row.event_type,
+                quality=row.quality,
+                cloud_cover=row.cloud_cover,
+                size_mb=row.size_mb,
+                timestamp=row.timestamp,
+                visibility_windows=vw
+            )
+            nodes.append(node)
+        except ValueError as e:
+            # Security: Log error without exposing sensitive details or stack traces
+            print(f"Security/Validation Warning: Dropping invalid data row. Reason: {e}")
+            continue
+
     return nodes
 
 if __name__ == "__main__":
