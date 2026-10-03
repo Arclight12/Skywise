@@ -19,3 +19,5 @@ img_17,urban,flood,0.89,0.11,44,2025-11-28T19:48:00
 img_18,mountain,storm,0.71,0.32,26,2025-11-28T19:18:00
 img_19,agriculture,urban_change,0.76,0.14,23,2025-11-28T19:22:00
 img_20,river,fire,0.84,0.27,32,2025-11-28T19:42:00
+invalid_img,coastal,flood,0.9,0.1,35,2025-11-28T19:40:00
+invalid_img2,long_region_name_long_region_name_long_region_name_long_region_name_long_region_name_long_region_name_long_region_name,flood,0.9,0.1,35,2025-11-28T19:40:00
