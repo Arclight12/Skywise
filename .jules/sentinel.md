@@ -1,0 +1,4 @@
+## 2026-10-05 - Missing input length limits on DataNode strings
+**Vulnerability:** String fields (`id`, `region`, `event_type`) in `DataNode` had no length validation, making the application susceptible to resource exhaustion (DoS) from overly large inputs.
+**Learning:** String validation must account for length limits, not just contents. Previous attempts to use destructive character stripping resulted in corrupting valid strings (like those with spaces or hyphens) within this app's architecture.
+**Prevention:** Always enforce length limits (e.g., maximum 255 characters) for string inputs as a primary defense, using it over destructive stripping to maintain valid input formatting without risking resource exhaustion.
