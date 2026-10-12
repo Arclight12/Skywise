@@ -1,0 +1,4 @@
+## 2025-02-14 - Unbounded Input Length Leading to DoS and Unhandled Exceptions Exposing Internals
+**Vulnerability:** Data models lacking length constraints on string inputs (like `id`, `region`, `event_type`) combined with unhandled exceptions in the main execution flow. This could lead to memory exhaustion/DoS attacks through excessively large string inputs, and unhandled validation errors could expose internal stack traces to users.
+**Learning:** Destructive character stripping shouldn't be used as it can corrupt valid input. Instead, strict length limits must be enforced on data instantiation, and top-level execution flows must securely catch and handle these validation errors to prevent leaking system internals.
+**Prevention:** Always enforce maximum length limits on data models when instantiating objects from external input. Always wrap main execution entry points in a try-except block that returns or prints a sanitized, generic error message to the user.
