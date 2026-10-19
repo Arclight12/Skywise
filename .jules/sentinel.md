@@ -1,0 +1,4 @@
+## 2024-10-19 - DoS Risk from Excessive String Allocation in DataNode
+**Vulnerability:** Input fields (`id`, `region`, `event_type`) in the `DataNode` class were not restricted in length, meaning excessively large strings could be passed when instantiating the objects, which creates a memory exhaustion / DoS vulnerability when processing large volumes of data.
+**Learning:** Even internal data models that map from external sources (like CSVs or APIs) should have length validations at instantiation to prevent upstream data from crashing the application via memory exhaustion. String length validation prevents this risk while preserving data integrity compared to truncation.
+**Prevention:** Always validate length or bounds for strings, lists, or other dynamically allocated inputs at the class constructor level, especially if instances will be held in memory collections or scheduled.
