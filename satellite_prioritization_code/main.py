@@ -31,24 +31,40 @@ def load_dataset(csv_path="data/satellite_data.csv"):
     return nodes
 
 if __name__ == "__main__":
-    print("\n=== Intelligent Satellite Downlink Prioritization (Team Version) ===\n")
+    import logging
+    import traceback
 
-    # Step 1: Load data
-    nodes = load_dataset()
+    # Configure secure logging for errors
+    logging.basicConfig(
+        filename='error.log',
+        level=logging.ERROR,
+        format='%(asctime)s - %(levelname)s - %(message)s'
+    )
 
-    # Step 2: Filter (common for all algorithms)
-    filtered_nodes = decision_tree_filter(nodes, REFERENCE_PRIORITY, score_threshold=10.0)
-    print(f"Filtered Nodes: {len(filtered_nodes)} remain after pruning\n")
+    try:
+        print("\n=== Intelligent Satellite Downlink Prioritization (Team Version) ===\n")
 
-    # Step 3: Run all algorithms
-    greedy = greedy_schedule(filtered_nodes)
-    astar = astar_schedule(filtered_nodes)
-    sa = sa_schedule(filtered_nodes)
+        # Step 1: Load data
+        nodes = load_dataset()
 
-    # Step 4: Save outputs
-    pd.DataFrame(greedy).to_csv("outputs/greedy_schedule.csv", index=False)
-    pd.DataFrame(astar).to_csv("outputs/astar_schedule.csv", index=False)
-    pd.DataFrame(sa).to_csv("outputs/simanneal_schedule.csv", index=False)
+        # Step 2: Filter (common for all algorithms)
+        filtered_nodes = decision_tree_filter(nodes, REFERENCE_PRIORITY, score_threshold=10.0)
+        print(f"Filtered Nodes: {len(filtered_nodes)} remain after pruning\n")
 
-    print("Schedules saved in 'outputs/' folder.")
-    print("Next: Run 'comparison_plot.py' to visualize the differences.")
+        # Step 3: Run all algorithms
+        greedy = greedy_schedule(filtered_nodes)
+        astar = astar_schedule(filtered_nodes)
+        sa = sa_schedule(filtered_nodes)
+
+        # Step 4: Save outputs
+        pd.DataFrame(greedy).to_csv("outputs/greedy_schedule.csv", index=False)
+        pd.DataFrame(astar).to_csv("outputs/astar_schedule.csv", index=False)
+        pd.DataFrame(sa).to_csv("outputs/simanneal_schedule.csv", index=False)
+
+        print("Schedules saved in 'outputs/' folder.")
+        print("Next: Run 'comparison_plot.py' to visualize the differences.")
+
+    except Exception as e:
+        # SEC-001: Log detailed errors securely instead of leaking stack traces to console
+        logging.error(f"Application error occurred:\n{traceback.format_exc()}")
+        print("An error occurred during execution. Please check error.log for details.")
