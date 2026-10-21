@@ -1,0 +1,4 @@
+## 2025-02-14 - Input Validation Length Limits vs Character Stripping
+**Vulnerability:** String fields (`id`, `region`, `event_type`) in `DataNode` lacked input validation, potentially allowing excessively long strings (DoS/memory exhaustion risk) or incompatible types (like integers/UUIDs for ID) which could cause crashes.
+**Learning:** Enforcing length limits (e.g., `<= 255`) is preferable to destructive character stripping, as stripping can corrupt valid characters (spaces, hyphens) in IDs or regional names. Also, explicitly casting fields like `id` to `str()` accommodates cases where they are passed as non-strings (e.g., integers or UUIDs) without causing type errors.
+**Prevention:** Always implement explicit length limits on string inputs and ensure resilient type handling (e.g., `str(id)`) in data model constructors, rather than attempting to strip specific characters that might be valid.
