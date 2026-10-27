@@ -1,0 +1,4 @@
+## 2025-02-27 - Input Validation with Type Preservation
+**Vulnerability:** Input length validation was missing, posing a resource exhaustion / DoS risk by allowing unlimited input lengths in memory/processing.
+**Learning:** Destructive input sanitization (like blanket character stripping or blind casting to strings) can corrupt non-string valid inputs (like UUIDs, ints) and their expected types in the rest of the application.
+**Prevention:** Validate length by dynamically casting to string strictly for the length check (e.g. `len(str(val)) > max_len`) while assigning the original uncast value to preserve its expected type.
