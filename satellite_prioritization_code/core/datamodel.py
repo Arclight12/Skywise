@@ -3,6 +3,13 @@ from datetime import datetime
 
 class DataNode:
     def __init__(self, id, region, event_type, quality, cloud_cover, size_mb, timestamp, visibility_windows):
+        if len(str(id)) > 255:
+            raise ValueError("Input length limit exceeded for 'id'")
+        if len(str(region)) > 255:
+            raise ValueError("Input length limit exceeded for 'region'")
+        if len(str(event_type)) > 255:
+            raise ValueError("Input length limit exceeded for 'event_type'")
+
         self.id = id
         self.region = region
         self.event_type = event_type
