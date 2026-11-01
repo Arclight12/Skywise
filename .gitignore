@@ -1,0 +1,4 @@
+__pycache__/
+*.pyc
+satellite_prioritization_code/**/__pycache__/
+*.pyc
