@@ -1,0 +1,4 @@
+## 2024-11-04 - Type-Preserving String Length Validation
+**Vulnerability:** Missing input length limits on core data models (like `DataNode`) pose a Denial of Service (DoS) risk if excessively large strings are provided.
+**Learning:** When validating fields like `id` that could be integers, UUIDs, or strings, it's important to cast them to strings strictly for the length check (e.g., `len(str(id)) > 255`) without changing their underlying original type in the class assignment. This preserves functionality while preventing DoS via large inputs.
+**Prevention:** Always add length limits to user-provided or external inputs in data models. Use `len(str(value))` for fields with dynamic types, rather than permanently casting the stored variable to a string, to avoid breaking downstream logic that expects original types.
