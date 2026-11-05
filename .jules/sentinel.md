@@ -1,0 +1,4 @@
+## 2024-03-10 - Secure Validation of Identifier Lengths
+**Vulnerability:** Missing input length validation on string identifiers (`id`, `region`, `event_type`) in DataNode initialization, leading to memory exhaustion and DoS potential. Destructive truncation/stripping was not permitted due to memory context constraints.
+**Learning:** For models that may accept multiple formats (e.g. integer `id` or UUID strings), strict length validation needs to gracefully handle non-string types. A safe pattern is casting fields to strings strictly during the length check (`len(str(val))`) without reassigning, preserving the original data type.
+**Prevention:** Implement input length constraints defensively via temporary string conversion rather than type coercion or truncation, failing securely with an exception when limits are exceeded.
