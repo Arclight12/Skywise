@@ -3,6 +3,14 @@ from datetime import datetime
 
 class DataNode:
     def __init__(self, id, region, event_type, quality, cloud_cover, size_mb, timestamp, visibility_windows):
+        # 🛡️ Sentinel: Enforce length limits to prevent DoS via resource exhaustion, without destructive stripping.
+        if len(str(id)) > 255:
+            raise ValueError("ID length exceeds 255 characters limit.")
+        if len(str(region)) > 100:
+            raise ValueError("Region length exceeds 100 characters limit.")
+        if len(str(event_type)) > 100:
+            raise ValueError("Event type length exceeds 100 characters limit.")
+
         self.id = id
         self.region = region
         self.event_type = event_type
